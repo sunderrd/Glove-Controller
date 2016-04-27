@@ -7,7 +7,6 @@
 //-Data send
 //-Read flex
 
-
 /* Created by:
  * Scott McCartney
  * Dharini Parthasarathy
@@ -26,14 +25,16 @@
 
 //--Globals
 unsigned long prev_com_ms;
+int mouse_move_x, mouse_move_y;
 
 //--Setup
 void setup() {
-  setup_gyro();
+  gyro_setup();
 }
 
 //--Loop
 void loop() {
-  int vibe_command = read_flex();
-  send_data(mouse_move_x, mouse_move_y, mouse_buttons, vibe_command);
+  gyro_loop();
+  int mouse_buttons = read_flex();
+  send_data(mouse_move_x, mouse_move_y, mouse_buttons, 0);
 }
