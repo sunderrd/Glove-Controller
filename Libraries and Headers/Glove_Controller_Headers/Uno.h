@@ -22,7 +22,7 @@
 Adafruit_DRV2605 drv;
 
 //--Vibration commands
-const int LEFT_CLICK = 0b110;
-const int RIGHT_CLICK = 0b111;
+const int LEFT_CLICK = 0b100;
+const int RIGHT_CLICK = 0b010;
 
 #endif /* Uno_h */
