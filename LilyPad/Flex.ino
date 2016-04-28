@@ -17,6 +17,8 @@ int read_flex() {
     else mouse_buttons |= (1 << 0);
   }
 
+  Serial.println(thumb_val);
+
   return mouse_buttons;
 }
 

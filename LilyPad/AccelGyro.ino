@@ -245,8 +245,8 @@ void gyro_loop() {
           refZ = zDeg;
           setRef = true;       
         } else {
-          int moveX = getMoveX(refX, xDeg);
-          int moveY = getMoveY(refY, yDeg);
+          mouse_move_x = getMoveX(refX, xDeg);
+          mouse_move_y = getMoveY(refY, yDeg);
         }
     }
 }
