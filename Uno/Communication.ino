@@ -4,6 +4,14 @@
 //-----the Arduino LilyPad
 //---------------------------------//
 
+void sync() {
+  while (digitalRead(CLK) == LOW);
+  while (digitalRead(CLK) == HIGH) {
+    digitalWrite(ACK, HIGH);
+  }
+  digitalWrite(ACK, LOW);
+}
+
 void read_data() {
   unsigned long data_in = 0;
   for (int i=0; i<32; i++) {
@@ -12,6 +20,7 @@ void read_data() {
     }
   }
   parce_data(data_in);
+  Serial.println(data_in);
 }
 
 void parce_data(unsigned long data_in) {
