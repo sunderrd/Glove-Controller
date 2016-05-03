@@ -9,6 +9,30 @@
 //-enable/ack signals - initial sync
 //-Use of all works on lilypad
 
+
+//----------------------HEADER CONTENT-------------------//
+//--Libraries
+
+
+//--Pins
+#define THUMB_PIN   A3
+#define INDEX_PIN   A2
+#define MIDDLE_PIN  A1
+#define VIBE_PIN    8
+#define CLK         9
+#define DATA        12
+#define ACK         10
+
+//--Flex sensor thresholds
+const int THUMB_THRESHOLD = 210;
+const int INDEX_THRESHOLD = 375;
+const int MIDDLE_THRESHOLD = 425;
+
+//--Vibration constants
+const int VIBE_MAX = 1023;
+const int VIBE_LENGTH = 750;
+//-------------------------------------------------------//
+
 /* Created by:
  * Scott McCartney
  * Dharini Parthasarathy
