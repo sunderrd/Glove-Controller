@@ -20,7 +20,6 @@
 //---Includes input control
 //---Communicates with Uno
 //---------------------------------//
-
 #include <LilyPad.h> //primary header file
 
 //--GlobalsSerial.println(mouse_buttons);
@@ -37,10 +36,10 @@ void setup() {
 
 //--Loop
 void loop() {
-  //gyro_loop();
+  gyro_loop();
   int mouse_buttons = read_flex();
   mouse_command(mouse_buttons, mouse_move_x, mouse_move_y);
-  //Serial.println(mouse_buttons);
-  //if (mouse_buttons & 0b11 != 0) vibe_start = true;
+  //Serial.println(mouse_move_x);
+  if (mouse_buttons & 0b11 != 0) vibe_start = true;
   vibe();
 }

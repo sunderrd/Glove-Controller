@@ -21,7 +21,7 @@
     #include "Wire.h"
 #endif
 
-#define tiltThreshold 25
+#define tiltThreshold 5
 
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
@@ -50,7 +50,7 @@ MPU6050 mpu;
 
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-#define calibrateCount 1250
+#define calibrateCount 600
 bool blinkState = false;
 int count = 0;      // Counts to a number while calibrating sensor (10 secs)
 int refX, refY, refZ;     // Reference value after calibration
@@ -258,7 +258,7 @@ void gyro_loop() {
 
 int getMoveX(int refX, int xDeg) {
   if(abs(refX-xDeg) > tiltThreshold) {
-     return ((float)(refX-xDeg) / 180) * 127;
+     return ((float)(refX-xDeg) / 180) * -127;
   } else {
      return 0;
   }
@@ -266,7 +266,7 @@ int getMoveX(int refX, int xDeg) {
 
 int getMoveY(int refY, int yDeg) {
   if(abs(refY-yDeg) > tiltThreshold) {
-    return ((float)(refY-yDeg) / 180) * 127;
+    return ((float)(refY-yDeg) / 180) * -127;
   } else {
     return 0;
   }
