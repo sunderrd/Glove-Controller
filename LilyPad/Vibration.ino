@@ -3,15 +3,19 @@
 //---Controls vibration module
 //-----------------------------//
 
-void vibe() {
-  unsigned long vibe_time = millis();
-  
+void vibe() {  
   //-Ramp up
-  for (int i=0; i<VIBE_MAX; i+=10) {
-    analogWrite(VIBE_PIN, i);
+  if (vibe_start) {
+    for (int i=0; i<VIBE_MAX; i+=10) {
+      analogWrite(VIBE_PIN, i);
+    }
+    vibe_start = false;
+    vibe_time = millis();
   }
 
-  if (timer(VIBE_LENGTH, vibe_time)) analogWrite(0);
+  if (timer(VIBE_LENGTH, &vibe_time)) {
+    analogWrite(VIBE_PIN, 0);
+  }
 }
 
 //--(from Ryan's alarm clock)

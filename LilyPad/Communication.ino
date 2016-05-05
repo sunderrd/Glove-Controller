@@ -3,7 +3,7 @@
 //---Controls communicaiton with
 //-----the Arduino Uno
 //---------------------------------//
-
+/*
 void sync() {
   while(digitalRead(ACK) == LOW) {
     digitalWrite(CLK, HIGH);
@@ -29,4 +29,4 @@ unsigned long unify_data(int mouse_move_x, int mouse_move_y, int mouse_buttons, 
   data_out |= (vibe_command << 24);
   return data_out;
 }
-
+*/

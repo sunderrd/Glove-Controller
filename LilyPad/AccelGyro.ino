@@ -96,6 +96,7 @@ void dmpDataReady() {
 // ================================================================
 
 void gyro_setup() {
+  
     // join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         Wire.begin();
@@ -107,8 +108,8 @@ void gyro_setup() {
     // initialize serial communication
     // (115200 chosen because it is required for Teapot Demo output, but it's
     // really up to you depending on your project)
-    Serial.begin(57600);
-    while (!Serial); // wait for Leonardo enumeration, others continue immediately
+    //Serial.begin(57600);
+    //while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
     // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3v or Ardunio
     // Pro Mini running at 3.3v, cannot handle this baud rate reliably due to
@@ -117,21 +118,21 @@ void gyro_setup() {
     // crystal solution for the UART timer.
 
     // initialize device
-    Serial.println(F("Initializing I2C devices..."));
+    //Serial.println(F("Initializing I2C devices..."));
     mpu.initialize();
 
     // verify connection
-    Serial.println(F("Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+    //Serial.println(F("Testing device connections..."));
+    //Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
     // wait for ready
-    Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-    while (Serial.available() && Serial.read()); // empty buffer
-    Serial.write('j');                           // Arbitrary character
-    while (Serial.available() && Serial.read()); // empty buffer again
+    //Serial.println(F("\nSend any character to begin DMP programming and demo: "));
+    //while (Serial.available() && Serial.read()); // empty buffer
+    //Serial.write('j');                           // Arbitrary character
+    //while (Serial.available() && Serial.read()); // empty buffer again
 
     // load and configure the DMP
-    Serial.println(F("Initializing DMP..."));
+    //Serial.println(F("Initializing DMP..."));
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
@@ -143,16 +144,16 @@ void gyro_setup() {
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
         // turn on the DMP, now that it's ready
-        Serial.println(F("Enabling DMP..."));
+        //Serial.println(F("Enabling DMP..."));
         mpu.setDMPEnabled(true);
 
         // enable Arduino interrupt detection
-        Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+        //Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
         attachInterrupt(0, dmpDataReady, RISING);
         mpuIntStatus = mpu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        Serial.println(F("DMP ready! Waiting for first interrupt..."));
+        //Serial.println(F("DMP ready! Waiting for first interrupt..."));
         dmpReady = true;
 
         // get expected DMP packet size for later comparison
@@ -162,9 +163,9 @@ void gyro_setup() {
         // 1 = initial memory load failed
         // 2 = DMP configuration updates failed
         // (if it's going to break, usually the code will be 1)
-        Serial.print(F("DMP Initialization failed (code "));
-        Serial.print(devStatus);
-        Serial.println(F(")"));
+        //Serial.print(F("DMP Initialization failed (code "));
+        //Serial.print(devStatus);
+        //Serial.println(F(")"));
     }
 
     // configure LED for output
@@ -196,7 +197,7 @@ void gyro_loop() {
     if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
         // reset so we can continue cleanly
         mpu.resetFIFO();
-        Serial.println(F("FIFO overflow!"));
+        //Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } else if (mpuIntStatus & 0x02) {
@@ -217,7 +218,7 @@ void gyro_loop() {
             int xDeg = euler[0] * 180/M_PI;
             int yDeg = euler[1] * 180/M_PI;
             int zDeg = euler[2] * 180/M_PI;
-            Serial.print("euler\t");
+            /*Serial.print("euler\t");
             Serial.print(xDeg);
             Serial.print("\t");
             Serial.print(yDeg);
@@ -232,28 +233,32 @@ void gyro_loop() {
             Serial.print("\tZRef: ");
             Serial.print(refZ);
             Serial.print("\tCount: ");
-            Serial.println(count);
+            Serial.println(count);*/
 
 
             
            
-        if(count < calibrateCount) {
+        if(count < calibrateCount && !setRef) {
           count++;
+          digitalWrite(LIGHT_PIN, HIGH); 
+          //Serial.println("calibrating");
         } else if (!setRef) {
           refX = xDeg;
           refY = yDeg;
           refZ = zDeg;
-          setRef = true;       
+          setRef = true;   
         } else {
-          mouse_move_x = getMoveX(refX, xDeg);
+          mouse_move_x = getMoveX(refZ, zDeg);
           mouse_move_y = getMoveY(refY, yDeg);
+          //Serial.println("reading");
+          digitalWrite(LIGHT_PIN, LOW);
         }
     }
 }
 
 int getMoveX(int refX, int xDeg) {
   if(abs(refX-xDeg) > tiltThreshold) {
-     return ((refX-xDeg) / 180) * 127;
+     return ((float)(refX-xDeg) / 180) * 127;
   } else {
      return 0;
   }
@@ -261,8 +266,10 @@ int getMoveX(int refX, int xDeg) {
 
 int getMoveY(int refY, int yDeg) {
   if(abs(refY-yDeg) > tiltThreshold) {
-    return ((refY-yDeg) / 180) * 127;
+    return ((float)(refY-yDeg) / 180) * 127;
   } else {
     return 0;
   }
 }
+
+

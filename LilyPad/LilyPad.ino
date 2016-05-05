@@ -3,35 +3,9 @@
 //-test EVERYTHING
 
 //TEST:
-//-Data send
 //-Read flex
 //-Gyro
 //-enable/ack signals - initial sync
-//-Use of all works on lilypad
-
-
-//----------------------HEADER CONTENT-------------------//
-//--Libraries
-
-
-//--Pins
-#define THUMB_PIN   A3
-#define INDEX_PIN   A2
-#define MIDDLE_PIN  A1
-#define VIBE_PIN    8
-#define CLK         9
-#define DATA        12
-#define ACK         10
-
-//--Flex sensor thresholds
-const int THUMB_THRESHOLD = 210;
-const int INDEX_THRESHOLD = 375;
-const int MIDDLE_THRESHOLD = 425;
-
-//--Vibration constants
-const int VIBE_MAX = 1023;
-const int VIBE_LENGTH = 750;
-//-------------------------------------------------------//
 
 /* Created by:
  * Scott McCartney
@@ -49,23 +23,24 @@ const int VIBE_LENGTH = 750;
 
 #include <LilyPad.h> //primary header file
 
-//--Globals
+//--GlobalsSerial.println(mouse_buttons);
 int mouse_move_x, mouse_move_y;
+unsigned long vibe_time;
+boolean vibe_start;
 
 //--Setup
 void setup() {
-  pinMode(CLK, OUTPUT);
-  pinMode(DATA, OUTPUT);
-  pinMode(ACK, INPUT);
+  Serial.begin(9600);
+  pinMode(LIGHT_PIN, OUTPUT);
   gyro_setup();
-  //sync();
 }
 
 //--Loop
 void loop() {
-  gyro_loop();
+  //gyro_loop();
   int mouse_buttons = read_flex();
-  //send_data(mouse_move_x, mouse_move_y, mouse_buttons, 0);
-  mosue_command(mouse_buttons, mouse_move_x, mouse_move_y);
-  if (mouse_buttons & 0b11 != 0) vibe();
+  mouse_command(mouse_buttons, mouse_move_x, mouse_move_y);
+  //Serial.println(mouse_buttons);
+  //if (mouse_buttons & 0b11 != 0) vibe_start = true;
+  vibe();
 }
