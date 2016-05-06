@@ -21,7 +21,7 @@
     #include "Wire.h"
 #endif
 
-#define tiltThreshold 5
+#define tiltThreshold 9
 
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
@@ -56,7 +56,7 @@ int count = 0;      // Counts to a number while calibrating sensor (10 secs)
 int refX, refY, refZ;     // Reference value after calibration
 int dx, dy, dz, tempx, tempy, tempz;
 int accelX, accelY, accelZ;
-bool setRef = false;      // false until reference values are set
+//bool setRef = false;      // false until reference values are set
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -248,28 +248,23 @@ void gyro_loop() {
           refZ = zDeg;
           setRef = true;   
         } else {
-          mouse_move_x = getMoveX(refZ, zDeg);
-          mouse_move_y = getMoveY(refY, yDeg);
+          if (!move_go) {
+            refX = xDeg;
+            refY = yDeg;
+            refZ = zDeg;
+          }
+          mouse_move_x = getMove(refZ, zDeg);
+          mouse_move_y = getMove(refY, yDeg);
           //Serial.println("reading");
           digitalWrite(LIGHT_PIN, LOW);
         }
     }
 }
 
-int getMoveX(int refX, int xDeg) {
-  if(abs(refX-xDeg) > tiltThreshold) {
-     return ((float)(refX-xDeg) / 180) * -127;
+int getMove(int ref, int deg) {
+  if(abs(ref-deg) > tiltThreshold) {
+     return ((float)(ref-deg) / 180) * 80;
   } else {
      return 0;
   }
 }
-
-int getMoveY(int refY, int yDeg) {
-  if(abs(refY-yDeg) > tiltThreshold) {
-    return ((float)(refY-yDeg) / 180) * -127;
-  } else {
-    return 0;
-  }
-}
-
-

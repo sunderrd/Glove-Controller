@@ -18,14 +18,15 @@
 //---Provides primary control of
 //-----the Arduino LilyPad
 //---Includes input control
-//---Communicates with Uno
 //---------------------------------//
 #include <LilyPad.h> //primary header file
 
-//--GlobalsSerial.println(mouse_buttons);
+//--Globals
 int mouse_move_x, mouse_move_y;
 unsigned long vibe_time;
 boolean vibe_start;
+boolean setRef;
+boolean move_go;
 
 //--Setup
 void setup() {
@@ -37,8 +38,12 @@ void setup() {
 //--Loop
 void loop() {
   gyro_loop();
+  if (!move_go) {
+    mouse_move_x = 0;
+    mouse_move_y = 0;
+  }
   int mouse_buttons = read_flex();
-  mouse_command(mouse_buttons, mouse_move_x, mouse_move_y);
+  if (setRef) mouse_command(mouse_buttons, mouse_move_x, mouse_move_y);
   //Serial.println(mouse_move_x);
   if (mouse_buttons & 0b11 != 0) vibe_start = true;
   vibe();
